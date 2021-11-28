@@ -37,14 +37,19 @@ Open a linux terminal, go to the _catlin_ws/src_ directory and type as follow:
   git clone https://github.com/motomechatronics/aws_robomaker_small_warehouse_world.git
   
   ```
-go to the _catlin_ws/src_ directory and type as follow:
+go to the _catlin_ws_ directory and type as follow:
 
   ```sh
   catkin_make
   
   ```
+### Load the amr into the environment
+In the terminal type as follow:
+  ```sh
+roslaunch amr_description amr_warehouse.launch  
+  
+  ```
 
-### Installation
 
 _Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
 
