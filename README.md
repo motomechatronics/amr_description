@@ -49,7 +49,7 @@ In the terminal type as follow:
 roslaunch amr_description amr_warehouse.launch  
   
   ```
-to move the robot you can open a new termina and use the topic /cmd_vel or use teleop_key package
+to drive the robot you can open a new terminal and use the /cmd_vel topic or also use teleop_key package.
 
 ### download teleop_twist_keyboard package
 to install _teleop_ type as follow:
