@@ -24,7 +24,7 @@ go to catkin_ws/src
 >rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 
 <!-- GETTING STARTED -->
-## Getting Started
+## amr_description
 
 This is an example of how you may give instructions on setting up your project locally.
 To get a local copy up and running follow these simple example steps.
