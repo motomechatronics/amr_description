@@ -1,0 +1,577 @@
+<?xml version="1.0"?>
+<robot name="amr" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Wheels property -->
+    <xacro:property name="cwm" value="0.5" />                                   <!-- cwm: caster wheel mass, [kg] -->
+    <xacro:property name="cwd" value="0.125" />                                 <!-- cwd: caster wheel diameter, [m]  -->
+    <xacro:property name="cwr" value="${cwd/2}" />                              <!-- cwr: caster wheel radius, [m]  -->
+    <xacro:property name="cwo" value="0.047" />                                 <!-- cwo: caster wheel offset, [m]  -->
+    <xacro:property name="cwt" value="0.037" />                                 <!-- cwt: caster wheel tread, [m]  -->
+    <xacro:property name="cwh" value="0.160" />                                 <!-- cwt: caster wheel heat, [m]  -->    
+
+    <xacro:property name="cw_ixx" value="${(cwm/12.0)*(3*cwr*cwr+cwt*cwt)}" />  <!-- cw_ixx: caster wheel inertia x axis, [kgm^2]  -->
+    <xacro:property name="cw_iyy" value="${cw_ixx}" />                          <!-- cw_iyy: caster wheel inertia y axis, [kgm^2]  -->
+    <xacro:property name="cw_izz" value="${(cwm*cwr*cwr)/2.0}" />               <!-- cw_izz: caster wheel inertia z axis, [kgm^2]  -->    
+
+    <xacro:property name="dwm" value="0.6" />                                   <!-- dwm: driving wheel mass, [kg] -->
+    <xacro:property name="dwd" value="0.125" />                                 <!-- dwd: driving wheel diameter, [m]  -->
+    <xacro:property name="dwr" value="${dwd/2}" />                              <!-- dwr: driving wheel radius, [m]  -->
+    <xacro:property name="dwt" value="0.044" />                                 <!-- dwt: driving wheel tread, [m]  -->    
+
+    <xacro:property name="dw_ixx" value="${(dwm/12.0)*(3*dwr*dwr+dwt*dwt)}" />  <!-- dw_ixx: driving wheel inertia x axis, [kgm^2]  -->
+    <xacro:property name="dw_iyy" value="${dw_ixx}" />                          <!-- dw_iyy: driving wheel inertia y axis, [kgm^2]  -->
+    <xacro:property name="dw_izz" value="${(dwm*dwr*dwr)/2.0}" />               <!-- dw_izz: driving wheel inertia z axis, [kgm^2]  -->   
+
+    <!-- chassis property -->
+    <xacro:property name="cm" value="70.0" />                                     <!-- cm: chassis mass, [kg] -->
+    <xacro:property name="clod" value="0.500" />                                <!-- clod: chassis longitudinal dimension, [m]  -->
+    <xacro:property name="clad" value="0.400" />                                <!-- clad: chassis lateral dimension, [m]  -->
+    <xacro:property name="ch" value="0.050" />                                  <!-- ch: chassis height, [m]  -->
+
+    <xacro:property name="c_ixx" value="${(cm/12.0)*(clad*clad+ch*ch)}" />      <!-- c_ixx: chassis inertia x axis, [kgm^2]  -->
+    <xacro:property name="c_iyy" value="${(cm/12.0)*(clod*clod+ch*ch)}" />      <!-- c_iyy: chassis inertia y axis, [kgm^2]  -->
+    <xacro:property name="c_izz" value="${(cm/12.0)*(clod*clod+clad*clad)}" />  <!-- c_izz: chassis inertia z axis, [kgm^2]  -->   
+
+    <!-- caster_wheel_link property -->
+    <xacro:property name="cwlm" value="0.050" />                                  <!-- cwlm: caster wheel link mass, [kg] -->
+    <xacro:property name="cwlh" value="${(cwh-cwr)}" />                           <!-- cwlh: caster wheel link height, [m]  -->
+
+    <xacro:macro name="caster_wheel_link" params="number colour">
+
+        <link name="caster_wheel_M${number}_link">   
+
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.050 0.050 ${cwlh}"/>
+                </geometry>
+                <material name="green"/>
+            </visual>
+
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.050 0.050 ${cwlh}"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>            
+                <mass value="${cwlm}" />
+                <inertia ixx="0" ixy="0.0" ixz="0.0" iyy="0" iyz="0.0" izz="0"/>
+            </inertial>
+ 
+        </link>
+
+        <gazebo reference="caster_wheel_M${number}_link">
+            <kp>10000.0</kp>
+            <kd>10000.0</kd>
+            <mu1>10.0</mu1>
+            <mu2>10.0</mu2>
+            <material>Gazebo/Green</material>
+        </gazebo>
+
+        <link name="wheel_M${number}_link">    
+
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="${cwt}" radius="${cwr}"/>
+                </geometry>
+                <material name="red"/>
+            </visual>    
+
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="${cwt}" radius="${cwr}"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>            
+                <mass value="${cwm}" />
+                <inertia ixx="${cw_ixx}" ixy="0.0" ixz="0.0" iyy="${cw_iyy}" iyz="0.0" izz="${cw_izz}"/>
+            </inertial>
+
+        </link>
+
+        <gazebo reference="wheel_M${number}_link">
+            <kp>10000.0</kp>
+            <kd>10000.0</kd>
+            <mu1>10.0</mu1>
+            <mu2>10.0</mu2>
+            <material>Gazebo/${colour}</material>
+        </gazebo>
+
+        <joint name="caster_wheel_M${number}_wheel_M${number}_joint" type="continuous">
+            <parent link="caster_wheel_M${number}_link"/>
+            <child link="wheel_M${number}_link"/>
+            <origin xyz="${cwo} 0 ${-cwlh/2}" rpy="1.570796 0 0"/>
+            <limit  effort="1.0" velocity="0.005"/>
+            <axis xyz="0 0 1"/>
+        </joint>
+
+    </xacro:macro>
+
+    <xacro:macro name="driving_wheel_link" params="number colour">
+        
+        <link name="driving_wheel_M${number}_link">    
+            
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="${dwt}" radius="${dwr}"/>
+                </geometry>
+                <material name="blue"/>
+            </visual>  
+
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="${dwt}" radius="${dwr}"/>
+                </geometry>
+            </collision>  
+
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>            
+                <mass value="${dwm}" />
+                <inertia ixx="${dw_ixx}" ixy="0.0" ixz="0.0" iyy="${dw_iyy}" iyz="0.0" izz="${dw_izz}"/>
+            </inertial>
+        
+
+        </link>
+
+        <gazebo reference="driving_wheel_M${number}_link">
+            <kp>10000.0</kp>
+            <kd>10000.0</kd>
+            <mu1>10.0</mu1>
+            <mu2>10.0</mu2>
+            <material>Gazebo/${colour}</material>
+        </gazebo>
+
+    </xacro:macro>
+
+    <!--xacro:macro name="driving_wheel_transmission" params="number">
+        <transmission name="tran${number}">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="base_link_driving_wheel_M${number}_joint">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="motor${number}">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+    </xacro:macro-->
+
+
+    <material name="blue">
+        <color rgba="0 0 0.8 1"/>
+    </material>
+    <material name="red">
+        <color rgba="0.8 0 0 1"/>
+    </material>
+    <material name="green">
+        <color rgba="0 0.8 0 1"/>
+    </material>
+    <material name="grey">
+        <color rgba="0.75 0.75 0.75 1"/>
+    </material>
+    <material name="white">
+        <color rgba="1.0 1.0 1.0 1"/>
+    </material>
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+
+    <!-- * * * Link Definitions * * * -->
+    <link name="base_link">
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${clod} ${clad} ${ch}"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>  
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                 <box size="${clod} ${clad} ${ch}"/>
+            </geometry>
+        </collision>  
+
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>            
+            <mass value="${cm}"/>
+            <inertia ixx="${c_ixx}" ixy="0.0" ixz="0.0" iyy="${c_iyy}" iyz="0.0" izz="${c_izz}"/>
+        </inertial>
+  
+    </link>
+
+    <gazebo reference="base_link">
+        <kp>10000.0</kp>
+        <kd>10000.0</kd>
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
+        <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <xacro:caster_wheel_link number="1" colour="Red"/>
+    <xacro:caster_wheel_link number="2" colour="Red"/>
+    <xacro:caster_wheel_link number="3" colour="Red"/>
+    <xacro:caster_wheel_link number="4" colour="Red"/>
+
+    <joint name="base_link_caster_wheel_M1_joint" type="continuous">
+    	<parent link="base_link"/>
+    	<child link="caster_wheel_M1_link"/>
+        <origin xyz="${clod/2} ${clad/2} ${-ch}" rpy="0 0 0"/>
+        <limit effort="1.0" velocity="1"/>
+        <axis xyz="0 0 1"/>
+	</joint>
+
+    <joint name="base_link_caster_wheel_M2_joint" type="continuous">
+    	<parent link="base_link"/>
+    	<child link="caster_wheel_M2_link"/>
+        <origin xyz="${clod/2} ${-clad/2} ${-ch}" rpy="0 0 0"/>
+        <limit effort="1.0" velocity="1"/>
+        <axis xyz="0 0 1"/>
+	</joint>
+
+    <joint name="base_link_caster_wheel_M3_joint" type="continuous">
+    	<parent link="base_link"/>
+    	<child link="caster_wheel_M3_link"/>
+        <origin xyz="${-clod/2} ${clad/2} ${-ch}" rpy="0 0 0"/>
+        <limit effort="1.0" velocity="1"/>
+        <axis xyz="0 0 1"/>
+	</joint>
+
+    <joint name="base_link_caster_wheel_M4_joint" type="continuous">
+    	<parent link="base_link"/>
+    	<child link="caster_wheel_M4_link"/>
+        <origin xyz="${-clod/2} ${-clad/2} ${-ch}" rpy="0 0 0"/>
+        <limit effort="1.0" velocity="1"/>
+        <axis xyz="0 0 1"/>
+	</joint>
+
+    <xacro:driving_wheel_link number="1" colour="Blue" />
+    <xacro:driving_wheel_link number="2" colour="Blue"/>
+
+    <joint name="base_link_driving_wheel_M1_joint" type="continuous">
+    	<parent link="base_link"/>
+    	<child link="driving_wheel_M1_link"/>
+        <origin xyz="0 ${-clad/2} ${-cwlh}" rpy="1.57 0 0"/>
+        <limit effort="15.0" velocity="0.1"/>
+        <axis xyz="0 0 -1"/>
+	</joint>
+
+
+    <joint name="base_link_driving_wheel_M2_joint" type="continuous">
+    	<parent link="base_link"/>
+    	<child link="driving_wheel_M2_link"/>
+        <origin xyz="0 ${clad/2} ${-cwlh}" rpy="1.57 0 0"/>
+        <limit effort="15.0" velocity="0.1"/>
+        <axis xyz="0 0 -1"/>
+	</joint>
+
+    <gazebo>
+        <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+
+            <alwaysOn>true</alwaysOn>
+            <updateRate>50</updateRate>
+            <leftJoint>base_link_driving_wheel_M2_joint</leftJoint>
+            <rightJoint>base_link_driving_wheel_M1_joint</rightJoint>
+            <wheelSeparation>${clad+dwt}</wheelSeparation>
+            <wheelDiameter>${dwd}</wheelDiameter>
+            <wheelAcceleration>0.2</wheelAcceleration>
+            <wheelTorque>30</wheelTorque>
+            <commandTopic>cmd_vel</commandTopic>
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>odom</odometryFrame>
+            <robotBaseFrame>base_footprint</robotBaseFrame>
+            <publishWheelTF>true</publishWheelTF>
+            <publishOdom>true</publishOdom>
+            <robotBaseFrame>base_link</robotBaseFrame>
+            <publishWheelJointState>true</publishWheelJointState>
+            <legacyMode>false</legacyMode>
+            <rosDebugLevel>false</rosDebugLevel>
+            <publishOdomTF>true</publishOdomTF>
+            <odometrySource>1</odometrySource>
+            <publishTf>1</publishTf>
+        </plugin>
+    </gazebo>
+
+
+    <!--xacro:driving_wheel_transmission number="1"/>
+    <xacro:driving_wheel_transmission number="2"/-->
+
+    <!-- ############# Sensors ############ -->
+
+    <!-- Depth sensor in the front -->
+
+    <link name="front_dcamera_link">
+      <visual>
+        <origin rpy="0.0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <box size="0.0005 0.0005 0.0005"/>
+        </geometry>
+        <material name="green"/>
+      </visual>
+    </link>
+
+    <joint name="base_front_dcamera_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="front_dcamera_link"/>
+      <origin xyz="${clod/2} 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <gazebo reference="front_dcamera_link">
+      <sensor name="front_depth_camera" type="depth">
+        <update_rate>20</update_rate>
+        <camera>
+          <horizontal_fov>1.047198</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>3</far>
+          </clip>
+        </camera>
+        <plugin name="front_depth_link_controller" filename="libgazebo_ros_openni_kinect.so">
+          <baseline>0.2</baseline>
+          <alwaysOn>true</alwaysOn>
+          <updateRate>1.0</updateRate>
+          <cameraName>front_dcamera</cameraName>
+          <imageTopicName>front_dcamera/color/image_raw</imageTopicName>
+          <cameraInfoTopicName>/front_dcamera/color/camera_info</cameraInfoTopicName>
+          <depthImageTopicName>/front_dcamera/depth/image_raw</depthImageTopicName>
+          <depthImageInfoTopicName>/front_dcamera/depth/camera_info</depthImageInfoTopicName>
+          <pointCloudTopicName>/front_dcamera/depth/points</pointCloudTopicName>
+          <frameName>front_dcamera_link</frameName>
+          <pointCloudCutoff>0.5</pointCloudCutoff>
+          <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
+          <distortionK1>0.00000001</distortionK1>
+          <distortionK2>0.00000001</distortionK2>
+          <distortionK3>0.00000001</distortionK3>
+          <distortionT1>0.00000001</distortionT1>
+          <distortionT2>0.00000001</distortionT2>
+          <CxPrime>0</CxPrime>
+          <Cx>0</Cx>
+          <Cy>0</Cy>
+          <focalLength>0</focalLength>
+          <hackBaseline>0</hackBaseline>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+    <!-- Depth sensor in the back -->
+
+    <link name="rear_dcamera_link">
+      <visual>
+        <origin rpy="0.0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <box size="0.0005 0.0005 0.0005"/>
+        </geometry>
+        <material name="green"/>
+      </visual>
+    </link>
+
+    <joint name="base_rear_dcamera_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="rear_dcamera_link"/>
+      <origin xyz="${-clod/2} 0 0" rpy="0 0 3.1416"/>
+    </joint>
+
+    <gazebo reference="rear_dcamera_link">
+      <sensor name="rear_depth_camera" type="depth">
+        <update_rate>20</update_rate>
+        <camera>
+          <horizontal_fov>1.047198</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>3</far>
+          </clip>
+        </camera>
+        <plugin name="rear_depth_link_controller" filename="libgazebo_ros_openni_kinect.so">
+          <baseline>0.2</baseline>
+          <alwaysOn>true</alwaysOn>
+          <updateRate>1.0</updateRate>
+          <cameraName>rear_dcamera</cameraName>
+          <imageTopicName>rear_dcamera/color/image_raw</imageTopicName>
+          <cameraInfoTopicName>/rear_dcamera/color/camera_info</cameraInfoTopicName>
+          <depthImageTopicName>/rear_dcamera/depth/image_raw</depthImageTopicName>
+          <depthImageInfoTopicName>/rear_dcamera/depth/camera_info</depthImageInfoTopicName>
+          <pointCloudTopicName>/rear_dcamera/depth/points</pointCloudTopicName>
+          <frameName>rear_dcamera_link</frameName>
+          <pointCloudCutoff>0.5</pointCloudCutoff>
+          <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
+          <distortionK1>0.00000001</distortionK1>
+          <distortionK2>0.00000001</distortionK2>
+          <distortionK3>0.00000001</distortionK3>
+          <distortionT1>0.00000001</distortionT1>
+          <distortionT2>0.00000001</distortionT2>
+          <CxPrime>0</CxPrime>
+          <Cx>0</Cx>
+          <Cy>0</Cy>
+          <focalLength>0</focalLength>
+          <hackBaseline>0</hackBaseline>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+
+    <!-- Sensor Laser in the front -->
+
+    <link name="front_laserscanner_link">
+        
+        <visual>
+            <origin rpy="0.0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size="0.005 0.005 0.005"/>
+            </geometry>
+            <material name="green"/>
+        </visual>
+
+        <collision>
+            <origin rpy="0.0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size="0.005 0.005 0.005"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="1e-5" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+        </inertial>
+
+    </link>
+
+    <joint name="base_front_laserscanner_joint" type="fixed">
+        <axis xyz="0 1 0" />
+        <parent link="base_link"/>
+        <child link="front_laserscanner_link"/>
+        <origin xyz="${clod/2} ${clad/2} 0" rpy="0 0 0"/>
+    </joint>
+
+    <gazebo reference="front_laserscanner_link">
+        <sensor type="ray" name="front_rplidar_sensor">
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>false</visualize>
+            <update_rate>40</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>720</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-1.4</min_angle>
+                        <max_angle>3.1416</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.10</min>
+                    <max>30.0</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <!-- Noise parameters based on published spec for Hokuyo laser
+                         achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+                         stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+                         reading. -->
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+            <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+                <topicName>front_scan</topicName>
+                <frameName>front_laserscanner_link</frameName>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+    <!--gazebo reference="rplidar_link">
+        <material>Gazebo/FlatBlack</material>
+    </gazebo-->
+
+    <!-- Sensor Laser in the back -->
+
+    <link name="rear_laserscanner_link">
+        
+        <visual>
+            <origin rpy="0.0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size="0.0005 0.0005 0.0005"/>
+            </geometry>
+            <material name="green"/>
+        </visual>
+
+        <collision>
+            <origin rpy="0.0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size="0.0005 0.0005 0.0005"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="1e-5" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+        </inertial>
+
+    </link>
+
+    <joint name="base_rear_laserscanner_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="rear_laserscanner_link"/>
+        <origin xyz="${-clod/2} ${-clad/2} 0" rpy="0 0 3.14159268"/>
+    </joint>
+
+    <gazebo reference="rear_laserscanner_link">
+        <sensor type="ray" name="rear_rplidar_sensor">
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>false</visualize>
+            <update_rate>40</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>720</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-1.4</min_angle>
+                        <max_angle>3.1416</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.10</min>
+                    <max>30.0</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <!-- Noise parameters based on published spec for Hokuyo laser
+                         achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+                         stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+                         reading. -->
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+            <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+                <topicName>rear_scan</topicName>
+                <frameName>rear_laserscanner_link</frameName>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+
+</robot>

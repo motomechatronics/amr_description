@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find aws_robomaker_small_warehouse_world)/worlds/no_roof_small_warehouse.world"/>
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="headless" default="false"/>
+    <arg name="debug" default="false"/>
+    <arg name="verbose" default="true"/>
+  </include>
+
+  <!-- Robot frames -->
+  <node pkg="amr_description" name="amr_tf" type="amr_tf.py"/>
+
+  <!-- Robot model -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find amr_description)/urdf/amr.xacro'" />
+
+  <!-- Spawn the robot model -->
+  <node name="movil" pkg="gazebo_ros" type="spawn_model" output="screen" 
+        args="-urdf -x 0 -y 0 -z 0.2 -model amr -param robot_description" />
+
+</launch>

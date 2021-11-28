@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <include file="$(find amr_description)/launch/spawn_amr_xacro.launch">
+        <arg name="x" value="0" />
+        <arg name="y" value="0.0" />
+        <arg name="z" value="0.1" />
+        <arg name="robot_name" value="amr" />
+    </include>
+    <include file="$(find amr_description)/launch/amr_joint_control.launch"/>
+</launch>
