@@ -26,15 +26,14 @@ go to catkin_ws/src
 <!-- GETTING STARTED -->
 ## amr_description
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+This is an example of an Autonomous Mobile Robot.
 
-### Prerequisites
+### Installation
 
-This is an example of how to list things you need to use the software and how to install them.
+Open a linux terminal and type as follow:
 * npm
   ```sh
-  npm install npm@latest -g
+  git clone https://github.com/motomechatronics/amr_description.git
   ```
 
 ### Installation
