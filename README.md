@@ -5,7 +5,7 @@ Autonomous Mobile Robot
 go to catkin_ws/src
 >git clone https://github.com/motomechatronics/amr_description.git
 >
->git clonw https://github.com/motomechatronics/aws_robomaker_small_warehouse_world.git
+>git clone https://github.com/motomechatronics/aws_robomaker_small_warehouse_world.git
 
 #### go to catkin_ws:
 
