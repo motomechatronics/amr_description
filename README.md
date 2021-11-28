@@ -31,7 +31,7 @@ This is an example of an Autonomous Mobile Robot.
 ### Installation
 
 Open a linux terminal and type as follow:
-* npm
+
   ```sh
   git clone https://github.com/motomechatronics/amr_description.git
   ```
