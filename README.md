@@ -5,7 +5,7 @@ to download the amr:
 
 go to catkin_ws/src
 
-git clone https://github.com/motomechatronics/amr_description.git
+>git clone https://github.com/motomechatronics/amr_description.git
 
 go to catkin_ws
 
