@@ -7,7 +7,7 @@ This is an example of an Autonomous Mobile Robot.
 
 ### Installation
 
-Open a linux terminal, go to the _catkin_ws and type:
+Open a linux terminal, go to the _catkin_ws_ and type:
 
 ```sh 
  source devel/setup.bash  
