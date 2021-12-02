@@ -31,7 +31,7 @@ In the terminal type as follow:
 roslaunch amr_description amr_warehouse.launch  
   
   ```
-to drive the robot you can open a new terminal and use the /cmd_vel topic or also run teleop_key package as:
+to drive the robot you can open a new terminal and use the _/cmd_vel_ topic or also run teleop_key package as:
 
   ```sh
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py
