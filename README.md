@@ -7,7 +7,12 @@ This is an example of an Autonomous Mobile Robot.
 
 ### Installation
 
-Open a linux terminal, go to the _catlin_ws/src_ directory and type as follow:
+Open a linux terminal, go to the _catkin_ws and type:
+
+```sh 
+ source devel/setup.bash  
+  ```
+go to the _catkin_ws/src_ directory and type as follow:
 
   ```sh
   git clone https://github.com/motomechatronics/amr_description.git
