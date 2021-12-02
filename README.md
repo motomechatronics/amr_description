@@ -19,7 +19,7 @@ go to the _catkin_ws/src_ directory and type as follow:
   git clone https://github.com/motomechatronics/aws_robomaker_small_warehouse_world.git
   
   ```
-go to the _catlin_ws_ directory and type as follow:
+return to the _catlin_ws_ directory and type as follow:
 
   ```sh
   catkin_make
